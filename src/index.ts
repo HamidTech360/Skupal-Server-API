@@ -8,10 +8,10 @@ import user from './routes/user.route'
 
 
 
-if(!config.JWT_SECRET){
-    console.log('No Jwt key provided');
-    process.exit(1)  
-}
+// if(!config.JWT_SECRET){
+//     console.log('No Jwt key provided');
+//     process.exit(1)  
+// }
 
 
 
