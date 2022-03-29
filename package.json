@@ -2,10 +2,12 @@
   "name": "skupal",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "start": "ts-node src/index.ts",
-    "build": "tsc"
+    "compile": "tsc",
+    "prestart": "npm run compile",
+    "start": "node src/index.js",
+    "dev": "ts-node src/index.ts"
   },
   "keywords": [],
   "author": "",
