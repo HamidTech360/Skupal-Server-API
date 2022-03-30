@@ -55,6 +55,10 @@ const userSchema = new mongoose.Schema({
         enum:['pending', 'verified'],
         default:'pending'
     },
+    totalEarnings:{
+        type:Number,
+        default:0
+    },
     confirmationCode:{
         type:String,
         unique:true

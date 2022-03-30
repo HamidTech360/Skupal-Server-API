@@ -4,7 +4,9 @@ import joi from 'joi-browser'
 import {CONFIG} from '../config'
 const config = CONFIG()
 import { ValidateUser,  UserModel } from "../models/user.model"
+import { TokenModel } from '../models/tokens.model'
 import {sendMail} from '../utils/mail'
+import { tokenMailTemplate } from '../utils/tokenMailTemplate'
 
 
 
@@ -17,7 +19,7 @@ export const createUser = async (req:any, res:any, next:any)=>{
         const findUser = await UserModel.findOne({email:req.body.email})
         if (findUser) return res.status(401).send('Email has been taken')
 
-        const token = jwt.sign({email:req.body.email}, `${config.JWT_SECRET}`)
+        const token = Math.floor(Math.random()* (999999-100000) + 1000000)
     
         const {firstName, lastName, userName, email, password, DOB, accountName, accountNumber, skills, socialMediaLinks, bank, phoneNumber} = req.body
         const newUser = new UserModel ({
@@ -36,12 +38,14 @@ export const createUser = async (req:any, res:any, next:any)=>{
             data:{}
         })
 
-        const email_body= `
-        <div>
-            <div>Welcome to SKUPAL. We hope to serve you with the best freelancing experience</div>
-            <div> click <a href="https://skupal.netlify.app/verify_account/${newUser.confirmationCode}">HERE</a> to verify your account</div>
-        </div>
-        `
+        const newToken = new TokenModel({
+            token, userEmail:saveUser.email
+        })
+        console.log(newToken);
+        
+
+        await newToken.save()
+        const email_body= tokenMailTemplate(token)
         sendMail(req.body.email, 'Skupal Team', email_body)
     }catch(ex){
         res.status(500).send(ex)
@@ -80,19 +84,54 @@ export const AuthUser = async (req:any, res:any, next:any)=>{
 }
 
 export const verifyAccount = async (req:any, res:any, next:any)=>{
-    const {ref} = req.body
+    const {token, email} = req.body
     try{
-        const checkCode = await UserModel.findOne({confirmationCode:ref})
-        if(!checkCode) return res.status(400).send('Failed to verify account')
 
-        checkCode.status = "verified"
-        checkCode.save()
+        const user = await UserModel.findOne({email})
+        if(!user) return res.status(401).send('Not a user')
+
+        const checkCode = await TokenModel.findOne({token, userEmail:email})
+        if(!checkCode) return res.status(400).send('Invalid token supplied or token already expired')
+
+        if(user.status==='verified') return res.json({
+            status:'success',
+            message:'User is already verified'
+        })
+
+        user.status = "verified"
+        user.save()
         res.json({
             status:'success',
-            message:'Account successfully verified'
+            message:'user successfully verified'
         })
     }catch(ex){
         res.status(500).send('Server Error. Cannot verify account')
+    }
+}
+
+export const ResendVerificationCode = async (req:any, res:any, next:any)=>{
+    const {email} = req.body
+    const token = Math.floor(Math.random()* (999999-100000) + 1000000)
+    try{
+
+        const user = await UserModel.findOne({email})
+        if(!user) return res.status(401).send('Not a user')
+
+        const email_body= tokenMailTemplate(token)
+        sendMail(email, 'Skupal Team', email_body)
+
+        const newToken = new TokenModel({
+            token, userEmail:email
+        })
+        await newToken.save()
+        console.log(newToken);
+
+        res.json({
+            status:'success',
+            message:'Token Resent successfully'
+        })
+    }catch(ex){
+        res.status(500).send('Failed to resend code')
     }
 }
 
@@ -109,6 +148,8 @@ export const getUser = async (req:any, res:any, next:any)=>{
         res.status(403).send(error)
     }
 }
+
+
 
 function ValidateAuth (user:any){
     const schema = {
