@@ -21,9 +21,9 @@ export const createUser = async (req:any, res:any, next:any)=>{
 
         const token = Math.floor(Math.random()* (999999-100000) + 1000000)
     
-        const {firstName, lastName, userName, email, password, DOB, accountName, accountNumber, skills, socialMediaLinks, bank, phoneNumber} = req.body
+        const {firstName, lastName, userName, email, password, DOB, accountName, accountNumber, skillIDs, socialMediaLinks, bank, phoneNumber} = req.body
         const newUser = new UserModel ({
-            firstName, lastName, userName, email, password, DOB, accountName, accountNumber, skills, socialMediaLinks,bank, phoneNumber,
+            firstName, lastName, userName, email, password, DOB, accountName, accountNumber, skillIDs, socialMediaLinks,bank, phoneNumber,
             confirmationCode:token
         })
         
