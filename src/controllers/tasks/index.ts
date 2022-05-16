@@ -1,4 +1,5 @@
-import { TaskModel, ValidateTask } from "../models/task.model";
+import { TaskModel } from "../../models/task.model";
+import {ValidateTask} from '../../validators/tasks'
 
 export const saveTask = async (req:any, res:any, next:any)=>{
     const {error} = ValidateTask(req.body)
@@ -15,7 +16,7 @@ export const saveTask = async (req:any, res:any, next:any)=>{
             status:'success',
             message:'Job posted successfully'
         })
-    }catch(ex:any){
+    }catch(ex){
         res.status(500).send(ex)
     }
 }

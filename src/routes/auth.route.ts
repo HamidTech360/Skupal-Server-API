@@ -4,14 +4,12 @@ import Auth from '../middlewares/auth'
 import {
         createUser,
          AuthUser, 
-         getUser, 
          verifyAccount,
          ResendVerificationCode
-        } from '../controllers/user.controller'
+        } from '../controllers/auth'
 
 router.post('/', createUser)
-router.get('/', Auth, getUser)
-router.post('/auth', AuthUser)
+router.post('/login', AuthUser)
 router.post('/verify', verifyAccount)
 router.post('/resend_code',ResendVerificationCode)
 

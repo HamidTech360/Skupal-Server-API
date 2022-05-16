@@ -15,15 +15,7 @@ const skillSchema = new mongoose.Schema({
 
 }, {timestamps:true})
 
- export function ValidateSkill (skill:any){
-    const schema = {
-        skill: joi.string().required(),
-        skillId:joi.string().required()
-    }
 
-    return joi.validate(skill, schema)
-
-}
 export const skillModel = mongoose.model('skill', skillSchema)
 
 // export {ValidateUser as ValidateUser};

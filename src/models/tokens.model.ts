@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import joi from 'joi-browser'
+
 
 const tokenSchema = new mongoose.Schema({
     token:{

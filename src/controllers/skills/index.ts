@@ -1,4 +1,5 @@
-import { ValidateSkill, skillModel } from "../models/skills.model";
+import {  skillModel } from "../../models/skills.model";
+import {ValidateSkill} from '../../validators/skills'
 
 export const AddSkill = async (req:any, res:any, next:any)=>{
     const {error} = ValidateSkill(req.body)

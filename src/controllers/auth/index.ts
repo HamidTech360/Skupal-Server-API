@@ -1,12 +1,12 @@
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
-import joi from 'joi-browser'
-import {CONFIG} from '../config'
+import {CONFIG} from '../../config'
 const config = CONFIG()
-import { ValidateUser,  UserModel } from "../models/user.model"
-import { TokenModel } from '../models/tokens.model'
-import {sendMail} from '../utils/mail'
-import { tokenMailTemplate } from '../utils/tokenMailTemplate'
+import {   UserModel } from "../../models/user.model"
+import {ValidateUser, ValidateAuth} from '../../validators/auth'
+import { TokenModel } from '../../models/tokens.model'
+import {sendMail} from '../../utils/mail'
+import { tokenMailTemplate } from '../../utils/mail/mailTemplates'
 
 
 
@@ -21,9 +21,9 @@ export const createUser = async (req:any, res:any, next:any)=>{
 
         const token = Math.floor(Math.random()* (999999-100000) + 1000000)
     
-        const {firstName, lastName, userName, email, password, DOB, accountName, accountNumber, skillIDs, socialMediaLinks, bank, phoneNumber} = req.body
+        const {firstName, lastName, userName, email, password, DOB, skillIDs, socialMediaLinks, phoneNumber} = req.body
         const newUser = new UserModel ({
-            firstName, lastName, userName, email, password, DOB, accountName, accountNumber, skillIDs, socialMediaLinks,bank, phoneNumber,
+            firstName, lastName, userName, email, password, DOB, skillIDs, socialMediaLinks, phoneNumber,
             confirmationCode:token
         })
         
@@ -135,26 +135,7 @@ export const ResendVerificationCode = async (req:any, res:any, next:any)=>{
     }
 }
 
-export const getUser = async (req:any, res:any, next:any)=>{
-    try{      
-        const user = await UserModel.findById(req.user._doc._id)
-        user.password=""
-        user.confirmationCode=""
-        res.json({
-            status:'success',
-            data:user
-        })
-    }catch(error){
-        res.status(403).send(error)
-    }
-}
 
 
 
-function ValidateAuth (user:any){
-    const schema = {
-        email:joi.string().required(),
-        password:joi.string().required()
-    }
-    return joi.validate(user, schema)
-}
+

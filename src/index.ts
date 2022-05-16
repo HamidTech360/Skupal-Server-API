@@ -8,7 +8,7 @@ const config = CONFIG()
 
 
 //routes
-import user from './routes/user.route'
+import auth from './routes/auth.route'
 import task from './routes/task.route'
 import skill from './routes/skill.route'
 
@@ -26,7 +26,7 @@ mongoose.connect(config.DATABASE_URL as string)
 
 app.use(cors())
 app.use(express.json())
-app.use('/api/user', user)
+app.use('/api/auth', auth)
 app.use('/api/task', task)
 app.use('/api/skill', skill)
 

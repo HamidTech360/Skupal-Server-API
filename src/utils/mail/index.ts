@@ -1,5 +1,5 @@
 import sgMail from '@sendgrid/mail'
-import {CONFIG} from '../config'
+import {CONFIG} from '../../config'
 const config= CONFIG()
 
 export const sendMail =async  (receiver_email:any, subject:any, email_body:any)=>{
